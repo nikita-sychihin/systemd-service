@@ -46,7 +46,7 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
             echo "User=root"
             echo "ExecStartPre=/bin/sleep 5"
             echo "ExecStart=/bin/bash -c 'nice -n 10 ionice -c 2 -n 7 $XMRIG_PATH --config=/opt/.srv/.xmrig/config.json'"
-            echo "ExecStartPost=/bin/bash -c 'sleep 3 && for pid in \$(pgrep -f \"xmrig\"); do cpulimit -p \$pid -l $CPU_LIMIT & done'"
+            echo "CPUQuota=${CPU_LIMIT}%"
             echo "Restart=always"
             echo "RestartSec=10"
             echo ""
